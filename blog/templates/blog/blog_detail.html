@@ -1,0 +1,25 @@
+{% extends 'catalog/base.html' %}
+{% load my_tags %}
+{% block content %}
+<div class="row text-center">
+    <div class="col-4">
+        <div class="card mb-4 box-shadow">
+            <div class="card-header">
+                Материал {{object.title}} {{object.slug}}
+                <h4 class="my-0 font-weight-normal">{{ object.title }}</h4>
+                <h4 class="my-0 font-weight-normal">{{ object.content }}</h4>
+                <h4 class="my-0 font-weight-normal">{{ object.preview }}</h4>
+                <h4 class="my-0 font-weight-normal">{{ object.slug }}</h4>
+            </div>
+            <div class="card-body">
+                <a class="btn btn-primary" role="button"
+                   href="{% url 'materials:list' %}">Назад</a>
+            </div>
+            Просмотры: {{object.views}}
+        </div>
+        <div class="coll-6">
+            <img src="{{ product.imagery | media_filter }}">
+        </div>
+    </div>
+    {% endblock %}
+</div>
