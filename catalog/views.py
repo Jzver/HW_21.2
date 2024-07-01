@@ -17,6 +17,23 @@ class ContactsTemplateView(TemplateView):
         return super().get(request, *args, **kwargs)
 
 
+class ProductListView(ListView):
+    """Класс для вывода страницы со всеми продуктами"""
+    model = Product
+
+    def get_context_data(self, *args, **kwargs):
+        """Метод для получения версий Продукта и вывода только активной версии"""
+        context = super().get_context_data(*args, **kwargs)
+        products = self.get_queryset()
+        for product in products:
+            product.version = product.versions.filter(is_current=True).first()
+
+        # Данная строчка нужна, чтобы в contex добавились новые данные о Продуктах
+        context["object_list"] = products
+
+        return context
+
+
 class ProductDetailView(DetailView):
     """Класс для вывода страницы с одним продуктом по pk"""
     model = Product
