@@ -1,0 +1,78 @@
+[
+   {
+      "model":"catalog.category",
+      "pk":1,
+      "fields":{
+         "category_name":"Смартфоны",
+         "category_description":"Все смартфоны"
+      }
+   },
+   {
+      "model":"catalog.category",
+      "pk":2,
+      "fields":{
+         "category_name":"Ноутбуки",
+         "category_description":"Все Ноутбуки"
+      }
+   },
+   {
+      "model":"catalog.category",
+      "pk":3,
+      "fields":{
+         "category_name":"Планшет",
+         "category_description":"Все планшеты"
+      }
+   },
+   {
+      "model":"catalog.product",
+      "pk":1,
+      "fields":{
+         "product_name":"Xiaomi Redmi 13C",
+         "product_description":"Новый смартфон Redmi оснащен процессором MediaTek Helio G99, 50-мегапиксельной основной камерой и 5-мегапиксельной фронтальной камерой.",
+         "imagery":"",
+         "category":1,
+         "cost_product":1000.0,
+         "created_at":"2024-05-02",
+         "updated_at":"2024-05-02"
+      }
+   },
+   {
+      "model":"catalog.product",
+      "pk":2,
+      "fields":{
+         "product_name":"Apple iPhone 15 128 ГБ",
+         "product_description":"Встречайте iPhone 15 - ваш идеальный спутник в мире безграничных возможностей!",
+         "imagery":"products/90x120_1.webp",
+         "category":1,
+         "cost_product":70000.0,
+         "created_at":"2024-05-02",
+         "updated_at":"2024-05-02"
+      }
+   },
+   {
+      "model":"catalog.product",
+      "pk":3,
+      "fields":{
+         "product_name":"Ноутбук ASUS VivoBook 15",
+         "product_description":"ASUS VivoBook 15 — залог комфорта Современный, стильный, производительный ноутбук ASUS",
+         "imagery":"products/90x120_2.webp",
+         "category":2,
+         "cost_product":50000.0,
+         "created_at":"2024-05-02",
+         "updated_at":"2024-05-02"
+      }
+   },
+   {
+      "model":"catalog.product",
+      "pk":4,
+      "fields":{
+         "product_name":"Apple iPad 10.2",
+         "product_description":"Для работы. Для отдыха. Для творчества.",
+         "imagery":"",
+         "category":3,
+         "cost_product":50000.0,
+         "created_at":"2024-05-02",
+         "updated_at":"2024-05-02"
+      }
+   }
+]
