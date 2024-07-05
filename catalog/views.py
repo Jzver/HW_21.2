@@ -1,10 +1,48 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.forms import inlineformset_factory
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 from catalog.forms import ProductForm, VersionForm
 from catalog.models import Product, Version
+
+
+class ContactsTemplateView(TemplateView):
+    template_name = 'catalog/contacts.html'
+
+    def post(self, request, *args, **kwargs):
+        name = request.POST.get('name')
+        phone = request.POST.get('phone')
+        message = request.POST.get('message')
+        print(name, phone, message)
+        return super().get(request, *args, **kwargs)
+
+
+class ProductListView(ListView):
+    """Класс для вывода страницы со всеми продуктами"""
+    model = Product
+
+    def get_context_data(self, *args, **kwargs):
+        """Метод для получения версий Продукта и вывода только активной версии"""
+        context = super().get_context_data(*args, **kwargs)
+        products = self.get_queryset()
+        for product in products:
+            product.version = product.versions.filter(is_current=True).first()
+
+        # Данная строчка нужна, чтобы в contex добавились новые данные о Продуктах
+        context["object_list"] = products
+
+        return context
+
+
+class ProductDetailView(DetailView):
+    """Класс для вывода страницы с одним продуктом по pk"""
+    model = Product
+
+    def get_object(self, queryset=None):
+        """Метод для настройки работы счетчика просмотра продукта"""
+        self.object = super().get_object(queryset)
+        self.object.view_counter += 1
+        self.object.save()
+        return self.object
 
 
 class ProductCreateView(LoginRequiredMixin, CreateView):
