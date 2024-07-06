@@ -32,7 +32,7 @@ class Product(models.Model):
                                                help_text="Укажите количество просмотров", default=0)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='Владелец',
                               related_name='products')
-
+    version = models.CharField(max_length=100, blank=True)
     # Добавляем новое поле is_published
     is_published = models.BooleanField(default=False, verbose_name='Опубликовано')
 
