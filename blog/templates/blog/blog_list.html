@@ -1,0 +1,29 @@
+{% extends 'catalog/base.html' %}
+{% load my_tags %}
+{% block content %}
+<div class="row text-center">
+    <a class="btn btn-primary" role="button"
+       href="{% url 'materials:create' %}">Создать</a>
+    {% for product in object_list %}
+    <div class="col-4">
+        <div class="card mb-4 box-shadow">
+            <div class="card-header">
+                {% if product.imagery %}
+                <img src="{{ product.imagery | media_filter }}">
+                {% endif %}
+                <h4 class="my-0 font-weight-normal">{{ product.category }}</h4>
+            </div>
+            <div class="card-body">
+                <a class="btn btn-primary" role="button"
+                   href="{% url 'blog:view' product.pk %}">Посмотреть</a>
+                <a class="btn btn-primary" role="button"
+                   href="{% url 'blog:edit' product.pk %}">Редактировать</a>
+                <a class="btn btn-primary" role="button"
+                   href="{% url 'blog:delete' product.pk %}">Удалить</a>
+            </div>
+        </div>
+
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

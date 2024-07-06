@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="col-12">
+        <form class="row" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <p>
+                            <label for="id_email">Email:</label><br>
+                            <input type="email" name="email" id="id_email" {{ form.email.attrs }}>
+                        </p>
+                        <p>
+                            <label for="id_phone">Телефон:</label><br>
+                            <input type="text" name="phone" id="id_phone" {{ form.phone.attrs }}>
+                        </p>
+                        <p>
+                            <label for="id_country">Страна:</label><br>
+                            <input type="text" name="country" id="id_country" {{ form.country.attrs }}>
+                        </p>
+                        <p>
+                            <label for="id_avatar">Аватар:</label><br>
+                            <input type="file" name="avatar" id="id_avatar" {{ form.avatar.attrs }}>
+                        </p>
+                        <button type="submit" class="btn btn-primary">
+                            Регистрация
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
