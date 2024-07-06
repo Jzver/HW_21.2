@@ -16,7 +16,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'price', 'category',)
     list_filter = ('category',)
     search_fields = ('name', 'description',)
-
+    fields = ('name', 'description', 'price', 'category', 'owner')
 
 @admin.register(Version)
 class VersionAdmin(admin.ModelAdmin):  # Изменено имя класса

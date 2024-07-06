@@ -1,3 +1,5 @@
+from django.http import HttpResponseForbidden
+from django.forms.models import inlineformset_factory
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -82,6 +84,13 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse('catalog:product_detail', args=[self.get_object().pk])
 
+    def dispatch(self, request, *args, **kwargs):
+        # Этот метод вызывается перед обработкой запроса в get или post
+        obj = self.get_object()
+        if obj.owner != request.user:
+            return HttpResponseForbidden("Вы не можете редактировать этот продукт.")
+        return super().dispatch(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
         VersionFormset = inlineformset_factory(Product, Version, form=VersionForm, extra=1)
@@ -98,9 +107,7 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
         formset = context_data['formset']
 
         if form.is_valid() and formset.is_valid():
-            self.object = form.save(commit=False)
-            self.object.owner = self.request.user
-            self.object.save()
+            self.object = form.save()
             formset.instance = self.object
             formset.save()
             return super().form_valid(form)

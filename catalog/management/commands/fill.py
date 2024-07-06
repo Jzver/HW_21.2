@@ -1,9 +1,23 @@
 import json
-
-from django.core.management import BaseCommand
+from django.core.management.base import BaseCommand
 from django.db import connection
+from django.contrib.auth.models import Group, Permission
 
 from catalog.models import Category, Product
+
+
+def create_moderators_group():
+    # Создаем группу модераторов
+    mod_group, created = Group.objects.get_or_create(name='Модераторы')
+    if created:
+        # Добавляем права доступа
+        change_product_perm = Permission.objects.get(codename='change_product')
+        delete_product_perm = Permission.objects.get(codename='delete_product')
+        mod_group.permissions.add(change_product_perm, delete_product_perm)
+        mod_group.save()
+        print('Группа "Модераторы" успешно создана и настроена.')
+    else:
+        print('Группа "Модераторы" уже существует.')
 
 
 class Command(BaseCommand):
@@ -23,7 +37,7 @@ class Command(BaseCommand):
     @staticmethod
     def json_read_products():
         products = []
-        # Здесь мы получаем данные из фикстурв с продуктами
+        # Здесь мы получаем данные из фикстуры с продуктами
         with open('data.json', 'r', encoding='utf-8') as file:
             data = json.load(file)
 
@@ -70,3 +84,6 @@ class Command(BaseCommand):
 
         # Создаем объекты в базе с помощью метода bulk_create()
         Product.objects.bulk_create(product_for_create)
+
+
+create_moderators_group()

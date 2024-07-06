@@ -4,20 +4,21 @@
 <div class="row text-center">
     <div class="col-4">
         <div class="card mb-4 box-shadow">
-
             <div class="card-header">
-                {% if object.imagery %}
-                <img src="{{ product.imagery | media_filter }}">
+                {% if object.preview %}
+                <img src="{{ object.preview.url }}" alt="{{ object.name }}">
                 {% endif %}
-                <h4 class="my-0 font-weight-normal">{{ object.product_name }}</h4>
-                <div class="card-body">
-                    <h4 class="my-0 font-weight-normal">{{ object.product_description | truncatewords:100 }}</h4>
-                    <div class="card-body">
-                        <h4 class="my-0 font-weight-normal">Цена {{ object.cost_product }}</h4>
-                    </div>
-                </div>
+                <h4 class="my-0 font-weight-normal">{{ object.name }}</h4>
             </div>
             <div class="card-body">
+                <h4 class="my-0 font-weight-normal">{{ object.description | truncatewords:100 }}</h4>
+                <h4 class="my-0 font-weight-normal">Цена {{ object.price }}</h4>
+                <!-- Здесь добавляем новое поле версии -->
+                <h4 class="my-0 font-weight-normal">Версия: {{ object.version }}</h4>
+                <!-- Кнопка редактирования для владельца продукта -->
+                {% if user.is_authenticated and object.owner == user %}
+                <a href="{% url 'catalog:product_update' object.id %}">Редактировать</a>
+                {% endif %}
                 <button type="button" class="btn btn-lg btn-block btn-outline-primary">Купить</button>
             </div>
         </div>

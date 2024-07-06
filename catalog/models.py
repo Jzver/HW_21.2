@@ -22,23 +22,19 @@ class Category(models.Model):
 class Product(models.Model):
     """Модель для продукта"""
     name = models.CharField(max_length=100, verbose_name='Наименование')
-    description = models.TextField(verbose_name='Описание', **NULLABLE)  # blank=True. null=True
-    preview = models.ImageField(upload_to='products_foto', verbose_name='Изображение', **NULLABLE)
-    category = models.ForeignKey(Category, related_name='products', on_delete=models.SET_NULL, null=True)
+    description = models.TextField(verbose_name='Описание', blank=True, null=True)
+    preview = models.ImageField(upload_to='products_foto', verbose_name='Изображение', blank=True, null=True)
+    category = models.ForeignKey('Category', related_name='products', on_delete=models.SET_NULL, null=True)
     price = models.IntegerField(verbose_name='Цена')
     date_of_creation = models.DateField(auto_now_add=True, verbose_name='Дата создания')
     last_modified_date = models.DateField(auto_now=True, verbose_name='Дата изменения')
-
     view_counter = models.PositiveIntegerField(verbose_name='Счетчик просмотров',
-                                               help_text="Укажите количество просмотров",
-                                               default=0)
-
-    owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        verbose_name='Владелец',
-        related_name='products',
-    )
+                                               help_text="Укажите количество просмотров", default=0)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='Владелец',
+                              related_name='products')
+    version = models.CharField(max_length=100, blank=True)
+    # Добавляем новое поле is_published
+    is_published = models.BooleanField(default=False, verbose_name='Опубликовано')
 
     class Meta:
         verbose_name = 'Продукт'
