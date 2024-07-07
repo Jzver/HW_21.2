@@ -18,6 +18,7 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ('name', 'description',)
     fields = ('name', 'description', 'price', 'category', 'owner')
 
+
 @admin.register(Version)
 class VersionAdmin(admin.ModelAdmin):  # Изменено имя класса
     """ Класс для регистрации версии в админке."""

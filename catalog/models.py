@@ -40,16 +40,14 @@ class Product(models.Model):
         verbose_name = 'Продукт'
         verbose_name_plural = 'Продукты'
         ordering = ('name',)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
         permissions = [
             ('cancel_publish_product', 'Может отменять публикацию продукта'),
             ('change_product_description', 'Может менять описание продукта'),
             ('change_product_category', 'Может менять категорию продукта'),
         ]
+
+    def __str__(self):
+        return self.name
 
 
 class Version(models.Model):
