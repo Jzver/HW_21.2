@@ -1,25 +1,23 @@
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
-from .forms import UserCreationForm
+from .forms import CustomUserCreationForm
+from django.contrib.auth.views import PasswordResetView as AuthPasswordResetView
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import PasswordResetForm
+from django.shortcuts import render, redirect
 from django.core.mail import send_mail
 from django.conf import settings
-import random
-import string
-from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import User
-from django.http import HttpResponse
-from django.views import View
 
 
+# Класс для регистрации пользователя
 class RegisterView(CreateView):
-    form_class = UserCreationForm
+    form_class = CustomUserCreationForm
     success_url = reverse_lazy('login')
     template_name = 'users/register.html'
 
     def form_valid(self, form):
-        # Сначала создаем пользователя
         user = form.save()
-        # Затем отправляем письмо с подтверждением
+        # Отправка письма с подтверждением регистрации
         send_mail(
             'Подтверждение регистрации',
             'Спасибо за регистрацию, пожалуйста, подтвердите ваш аккаунт.',
@@ -30,25 +28,25 @@ class RegisterView(CreateView):
         return super(RegisterView, self).form_valid(form)
 
 
-class PasswordResetView(View):
+# Класс для сброса пароля
+class PasswordResetView(AuthPasswordResetView):
+    template_name = 'users/password_reset_form.html'
+    email_template_name = 'users/password_reset_email.html'
+    subject_template_name = 'users/password_reset_subject.txt'
+    success_url = reverse_lazy('password_reset_done')
+
     def post(self, request, *args, **kwargs):
-        email = request.POST.get('email')
-        user = User.objects.filter(email=email).first()
-
-        if user:
-            # Генерация нового пароля
-            new_password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
-            user.password = make_password(new_password)
-            user.save()
-
-            # Отправка нового пароля на электронную почту пользователя
-            send_mail(
-                'Ваш новый пароль',
-                f'Ваш новый пароль: {new_password}',
-                settings.DEFAULT_FROM_EMAIL,
-                [email],
-                fail_silently=False,
-            )
-            return HttpResponse('Новый пароль был отправлен на вашу электронную почту.')
+        form = PasswordResetForm(request.POST)
+        if form.is_valid():
+            opts = {
+                'use_https': request.is_secure(),
+                'token_generator': default_token_generator,
+                'from_email': settings.DEFAULT_FROM_EMAIL,
+                'email_template_name': self.email_template_name,
+                'subject_template_name': self.subject_template_name,
+                'request': request,
+            }
+            form.save(**opts)
+            return super(PasswordResetView, self).form_valid(form)
         else:
-            return HttpResponse('Пользователь с таким адресом электронной почты не найден.', status=404)
+            return self.form_invalid(form)
