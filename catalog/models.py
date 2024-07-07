@@ -44,6 +44,13 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        permissions = [
+            ('cancel_publish_product', 'Может отменять публикацию продукта'),
+            ('change_product_description', 'Может менять описание продукта'),
+            ('change_product_category', 'Может менять категорию продукта'),
+        ]
+
 
 class Version(models.Model):
     """Модель для версии продукта"""

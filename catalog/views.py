@@ -80,16 +80,18 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
 class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
+    fields = ['description', 'category']
+
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if not request.user.has_perm('catalog.change_product_description') or \
+                not request.user.has_perm('catalog.change_product_category') or \
+                obj.owner != request.user:
+            return HttpResponseForbidden("У вас нет разрешения на изменение этого продукта.")
+        return super().dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
         return reverse('catalog:product_detail', args=[self.get_object().pk])
-
-    def dispatch(self, request, *args, **kwargs):
-        # Этот метод вызывается перед обработкой запроса в get или post
-        obj = self.get_object()
-        if obj.owner != request.user:
-            return HttpResponseForbidden("Вы не можете редактировать этот продукт.")
-        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
@@ -118,3 +120,8 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
 class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
     success_url = reverse_lazy('catalog:products_list')
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.has_perm('your_app_label.cancel_publish_product'):
+            return HttpResponseForbidden("У вас нет разрешения на удаление этого продукта.")
+        return super().dispatch(request, *args, **kwargs)
