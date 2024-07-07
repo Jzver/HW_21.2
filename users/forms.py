@@ -8,6 +8,7 @@ class UserRegisterForm(StyleFormMixin, UserCreationForm):
         model = User
         fields = ('email', 'password1', 'password2')
 
+
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = User

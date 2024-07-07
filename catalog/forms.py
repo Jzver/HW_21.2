@@ -4,7 +4,6 @@ from django.forms import ModelForm, BooleanField
 from catalog.models import Product, Version
 
 
-
 class StyleFormMixin:
     """Класс для стилизации форм"""
 
@@ -27,7 +26,6 @@ class ProductForm(StyleFormMixin, ModelForm):
         model = Product
         fields = ('name', 'description', 'preview', 'category', 'price')
 
-
     def clean_name(self):
         """Метод для проверки валидации имени Продукта при создании нового объекта"""
         cleaned_data = self.cleaned_data['name']
@@ -46,7 +44,6 @@ class ProductForm(StyleFormMixin, ModelForm):
 
 
 class VersionForm(StyleFormMixin, ModelForm):
-
     class Meta:
         model = Version
         fields = ('id', 'product', 'name', 'number', 'is_current')

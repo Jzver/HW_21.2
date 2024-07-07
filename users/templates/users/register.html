@@ -8,22 +8,36 @@
             <div class="col-6">
                 <div class="card">
                     <div class="card-body">
+                        <!-- Email Field -->
                         <p>
                             <label for="id_email">Email:</label><br>
-                            <input type="email" name="email" id="id_email" {{ form.email.attrs }}>
+                            <input type="email" name="email" id="id_email" required {{ form.email.attrs }}>
                         </p>
+                        <!-- Phone Field -->
                         <p>
                             <label for="id_phone">Телефон:</label><br>
                             <input type="text" name="phone" id="id_phone" {{ form.phone.attrs }}>
                         </p>
+                        <!-- Country Field -->
                         <p>
                             <label for="id_country">Страна:</label><br>
                             <input type="text" name="country" id="id_country" {{ form.country.attrs }}>
                         </p>
+                        <!-- Avatar Field -->
                         <p>
                             <label for="id_avatar">Аватар:</label><br>
                             <input type="file" name="avatar" id="id_avatar" {{ form.avatar.attrs }}>
                         </p>
+                        <!-- Password Fields -->
+                        <p>
+                            <label for="id_password1">Пароль:</label><br>
+                            <input type="password" name="password1" id="id_password1" required {{ form.password1.attrs }}>
+                        </p>
+                        <p>
+                            <label for="id_password2">Повторите пароль:</label><br>
+                            <input type="password" name="password2" id="id_password2" required {{ form.password2.attrs }}>
+                        </p>
+                        <!-- Submit Button -->
                         <button type="submit" class="btn btn-primary">
                             Регистрация
                         </button>
