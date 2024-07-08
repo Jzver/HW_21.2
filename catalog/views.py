@@ -79,8 +79,8 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
 
 class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Product
-    form_class = ProductForm
     fields = ['description', 'category']
+    template_name = 'catalog/product_form.html'
 
     def dispatch(self, request, *args, **kwargs):
         obj = self.get_object()
