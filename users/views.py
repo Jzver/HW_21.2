@@ -2,11 +2,12 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from .forms import CustomUserCreationForm
 from django.contrib.auth.views import PasswordResetView as AuthPasswordResetView
-from django.contrib.auth.models import User
+from users.models import User
 from django.contrib.auth.forms import PasswordResetForm
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail
 from django.conf import settings
+from django.contrib.auth.tokens import default_token_generator
 
 
 # Класс для регистрации пользователя
