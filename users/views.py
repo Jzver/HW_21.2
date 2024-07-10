@@ -1,31 +1,53 @@
+import secrets
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, UserRegisterForm
 from django.contrib.auth.views import PasswordResetView as AuthPasswordResetView
-from django.contrib.auth.models import User
+from users.models import User
 from django.contrib.auth.forms import PasswordResetForm
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail
 from django.conf import settings
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib import messages
+from django.shortcuts import get_object_or_404, redirect
 
 
 # Класс для регистрации пользователя
 class RegisterView(CreateView):
     form_class = CustomUserCreationForm
-    success_url = reverse_lazy('login')
+    success_url = reverse_lazy('users:login')
     template_name = 'users/register.html'
 
     def form_valid(self, form):
-        user = form.save()
-        # Отправка письма с подтверждением регистрации
+        user = form.save(commit=False)
+        user.is_active = False
+        token = secrets.token_hex(16)
+        user.token = token
+        user.save()
+        host = self.request.get_host()
+        url = f'http://{host}/users/email_confirm/{token}'
         send_mail(
             'Подтверждение регистрации',
-            'Спасибо за регистрацию, пожалуйста, подтвердите ваш аккаунт.',
+            f'Спасибо за регистрацию. Пожалуйста, подтвердите ваш аккаунт, перейдя по следующей ссылке: {url}',
             settings.DEFAULT_FROM_EMAIL,
             [user.email],
             fail_silently=False,
         )
-        return super(RegisterView, self).form_valid(form)
+        return super().form_valid(form)
+
+
+def email_confirm(request, token):
+    user = get_object_or_404(User, token=token)
+    if not user.is_active:
+        user.is_active = True
+        user.token = ''  # Очистка токена после активации
+        user.save()
+        messages.success(request, 'Ваш аккаунт был активирован.')
+        return redirect('login')  # Перенаправление на страницу входа
+    else:
+        messages.info(request, 'Аккаунт уже был активирован.')
+        return redirect('users:login')
 
 
 # Класс для сброса пароля

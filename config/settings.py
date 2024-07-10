@@ -48,7 +48,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'users','templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -56,6 +56,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.csrf',
             ],
         },
     },
@@ -130,9 +131,9 @@ LOGOUT_REDIRECT_URL = 'login'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.yandex.ru'
-EMAIL_USE_TLS = True
+EMAIL_USE_SSL = True
 EMAIL_PORT = 465
 EMAIL_HOST_USER = 'jonnyskypro@yandex.ru'
-EMAIL_HOST_PASSWORD = 'Vlada220913!'
+EMAIL_HOST_PASSWORD = 'xhwkypiolabfzyei'
 DEFAULT_FROM_EMAIL = 'jonnyskypro@yandex.ru'
 
