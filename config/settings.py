@@ -48,7 +48,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'users','templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -134,6 +134,6 @@ EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_USE_SSL = True
 EMAIL_PORT = 465
 EMAIL_HOST_USER = 'jonnyskypro@yandex.ru'
-EMAIL_HOST_PASSWORD = 'Vlada220913!'
+EMAIL_HOST_PASSWORD = 'xhwkypiolabfzyei'
 DEFAULT_FROM_EMAIL = 'jonnyskypro@yandex.ru'
 

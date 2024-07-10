@@ -1,8 +1,7 @@
 import secrets
-
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, UserRegisterForm
 from django.contrib.auth.views import PasswordResetView as AuthPasswordResetView
 from users.models import User
 from django.contrib.auth.forms import PasswordResetForm
@@ -10,12 +9,14 @@ from django.shortcuts import render, redirect
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib import messages
+from django.shortcuts import get_object_or_404, redirect
 
 
 # Класс для регистрации пользователя
 class RegisterView(CreateView):
     form_class = CustomUserCreationForm
-    success_url = reverse_lazy('login')
+    success_url = reverse_lazy('users:login')
     template_name = 'users/register.html'
 
     def form_valid(self, form):
@@ -34,6 +35,19 @@ class RegisterView(CreateView):
             fail_silently=False,
         )
         return super().form_valid(form)
+
+
+def email_confirm(request, token):
+    user = get_object_or_404(User, token=token)
+    if not user.is_active:
+        user.is_active = True
+        user.token = ''  # Очистка токена после активации
+        user.save()
+        messages.success(request, 'Ваш аккаунт был активирован.')
+        return redirect('login')  # Перенаправление на страницу входа
+    else:
+        messages.info(request, 'Аккаунт уже был активирован.')
+        return redirect('users:login')
 
 
 # Класс для сброса пароля
