@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% load my_tags %}
 {% block content %}
+{% if user.is_authenticated %}
+    <a href="{% url 'catalog:product_create' %}" class="btn btn-primary">Добавить продукт</a>
+{% endif %}
 <div class="row text-center">
     {% for product in object_list %}
     <div class="col-4">

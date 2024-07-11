@@ -11,6 +11,7 @@ from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth import views as auth_views
 
 
 # Класс для регистрации пользователя
@@ -44,7 +45,7 @@ def email_confirm(request, token):
         user.token = ''  # Очистка токена после активации
         user.save()
         messages.success(request, 'Ваш аккаунт был активирован.')
-        return redirect('login')  # Перенаправление на страницу входа
+        return redirect('users:login')  # Перенаправление на страницу входа
     else:
         messages.info(request, 'Аккаунт уже был активирован.')
         return redirect('users:login')
@@ -54,8 +55,8 @@ def email_confirm(request, token):
 class PasswordResetView(AuthPasswordResetView):
     template_name = 'users/password_reset_form.html'
     email_template_name = 'users/password_reset_email.html'
-    subject_template_name = 'users/password_reset_subject.txt'
-    success_url = reverse_lazy('password_reset_done')
+    subject_template_name = 'users/password_reset_email.txt'
+    success_url = reverse_lazy('users/password_reset_done')
 
     def post(self, request, *args, **kwargs):
         form = PasswordResetForm(request.POST)
@@ -72,3 +73,17 @@ class PasswordResetView(AuthPasswordResetView):
             return super(PasswordResetView, self).form_valid(form)
         else:
             return self.form_invalid(form)
+
+
+class PasswordResetConfirmView(auth_views.PasswordResetConfirmView):
+    template_name = 'password_reset_confirm.html'
+    success_url = reverse_lazy('users:login')
+
+
+class PasswordResetDoneView(auth_views.PasswordResetDoneView):
+    template_name = 'password_reset_done.html'
+
+
+class PasswordResetCompleteView(auth_views.PasswordResetCompleteView):
+    template_name = 'password_reset_complete.html'
+    success_url = reverse_lazy('users:login')
