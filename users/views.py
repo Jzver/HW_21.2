@@ -5,11 +5,11 @@ from django.core.mail import send_mail
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from django.views import View
-from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 from django.conf import settings
+from .models import User
 from .forms import CustomUserCreationForm
 
 
@@ -51,25 +51,34 @@ def email_confirm(request, token):
 
 
 # Класс для сброса пароля
+def send_email(email, new_password):
+    subject = 'Your new password'
+    message = f'Your new password is: {new_password}'
+    from_email = settings.DEFAULT_FROM_EMAIL
+    send_mail(subject, message, from_email, [email])
+
+
 class CustomPasswordResetView(View):
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         email = request.POST.get('email')
         try:
             user = User.objects.get(email=email)
             new_password = self.generate_random_password()
             user.set_password(new_password)
             user.save()
-            self.send_email(user.email, new_password)
+            send_email(user.email, new_password)
             return JsonResponse(
                 {'status': 'success', 'message': 'Password reset successfully. Check your email for the new password.'})
         except User.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'User with this email does not exist.'})
 
-    def generate_random_password(self, length=8):
+    @staticmethod
+    def generate_random_password(length=8):
         characters = string.ascii_letters + string.digits + string.punctuation
-        return ''.join(random.choice(characters) for i in range(length))
+        return ''.join(random.choice(characters) for _ in range(length))
 
-    def send_email(self, email, new_password):
+    @staticmethod
+    def send_email(email, new_password):
         subject = 'Your new password'
         message = f'Your new password is: {new_password}'
         from_email = settings.DEFAULT_FROM_EMAIL
