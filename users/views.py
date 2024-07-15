@@ -1,17 +1,16 @@
+import random
+import string
 import secrets
+from django.core.mail import send_mail
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
-from .forms import CustomUserCreationForm, UserRegisterForm
-from django.contrib.auth.views import PasswordResetView as AuthPasswordResetView
-from users.models import User
-from django.contrib.auth.forms import PasswordResetForm
-from django.shortcuts import render, redirect
-from django.core.mail import send_mail
-from django.conf import settings
-from django.contrib.auth.tokens import default_token_generator
-from django.contrib import messages
+from django.views import View
+from django.contrib.auth.models import User
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
-from django.contrib.auth import views as auth_views
+from django.contrib import messages
+from django.conf import settings
+from .forms import CustomUserCreationForm
 
 
 # Класс для регистрации пользователя
@@ -52,38 +51,26 @@ def email_confirm(request, token):
 
 
 # Класс для сброса пароля
-class PasswordResetView(AuthPasswordResetView):
-    template_name = 'users/password_reset_form.html'
-    email_template_name = 'users/password_reset_email.html'
-    subject_template_name = 'users/password_reset_email.txt'
-    success_url = reverse_lazy('users/password_reset_done')
-
+class CustomPasswordResetView(View):
     def post(self, request, *args, **kwargs):
-        form = PasswordResetForm(request.POST)
-        if form.is_valid():
-            opts = {
-                'use_https': request.is_secure(),
-                'token_generator': default_token_generator,
-                'from_email': settings.DEFAULT_FROM_EMAIL,
-                'email_template_name': self.email_template_name,
-                'subject_template_name': self.subject_template_name,
-                'request': request,
-            }
-            form.save(**opts)
-            return super(PasswordResetView, self).form_valid(form)
-        else:
-            return self.form_invalid(form)
+        email = request.POST.get('email')
+        try:
+            user = User.objects.get(email=email)
+            new_password = self.generate_random_password()
+            user.set_password(new_password)
+            user.save()
+            self.send_email(user.email, new_password)
+            return JsonResponse(
+                {'status': 'success', 'message': 'Password reset successfully. Check your email for the new password.'})
+        except User.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'User with this email does not exist.'})
 
+    def generate_random_password(self, length=8):
+        characters = string.ascii_letters + string.digits + string.punctuation
+        return ''.join(random.choice(characters) for i in range(length))
 
-class PasswordResetConfirmView(auth_views.PasswordResetConfirmView):
-    template_name = 'password_reset_confirm.html'
-    success_url = reverse_lazy('users:login')
-
-
-class PasswordResetDoneView(auth_views.PasswordResetDoneView):
-    template_name = 'password_reset_done.html'
-
-
-class PasswordResetCompleteView(auth_views.PasswordResetCompleteView):
-    template_name = 'password_reset_complete.html'
-    success_url = reverse_lazy('users:login')
+    def send_email(self, email, new_password):
+        subject = 'Your new password'
+        message = f'Your new password is: {new_password}'
+        from_email = settings.DEFAULT_FROM_EMAIL
+        send_mail(subject, message, from_email, [email])
