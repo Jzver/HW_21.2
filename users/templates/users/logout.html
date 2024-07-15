@@ -3,17 +3,17 @@
 {% block content %}
 <div class="container">
     <div class="col-12">
-        <form class="row" method="get" action="{% url 'users:logout' %}">
+        <div class="row">
             <div class="col-6">
                 <div class="card">
-                    <div class="card-body">
-                        <button type="submit" class="btn btn-primary">
-                            Выйти
-                        </button>
+                    <div class="card-body d-flex align-items-center">
+                        <form method="get" action="{% url 'users:logout' %}">
+                            <button type="submit" class="btn btn-primary">Выйти</button>
+                        </form>
                     </div>
                 </div>
             </div>
-        </form>
+        </div>
     </div>
 </div>
 {% endblock %}
